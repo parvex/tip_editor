@@ -6,13 +6,13 @@ LINKFLAGS = --std=c++11 -lboost_unit_test_framework
 lib_SOURCES = \
 	tip.h \
 	point.h \
-	container.h
+	tip_container.h
 
 lib_OBJECTS=$(lib_SOURCES:.cpp=.o)
 
 tests_SOURCES = \
 	tests_main.cpp \
-	recttest.cpp
+	tip_tests.cpp
 
 tests_OBJECTS=$(tests_SOURCES:.cpp=.o)
 
