@@ -7,13 +7,12 @@
 
 class TipContainer
 {
-	std::vector<std::unique_ptr<Tip>> tab;
+	std::vector<Tip*> tab;
 
 public:
-	void add(const Turn& tip) {} //KURWA{ Turn* ptr = new Turn(tip); tab.push_back(std::move(ptr)); }
-	void add(const Forward& tip) {}
-	void add(const ExitRamp& tip) {}
-	void add(const Destination& tip) {}
-	void remove(int n) {}
- 	void insert(int n) {}
+	void add(Tip* tip) { tab.push_back(tip); }
+	void remove(unsigned n) { tab.erase(tab.begin() + n); }
+	void insert(unsigned n, Tip* tip) { tab.insert(tab.begin() + n, tip); }
+	Tip& operator [] (unsigned n) { return *(tab[n]); }
 };
+

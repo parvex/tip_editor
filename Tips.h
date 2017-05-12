@@ -1,12 +1,21 @@
 #pragma once
 #include "Visitor.h"
+#include <iostream>
 
 enum direction { left, right, forward, back };
 
 struct Turn : Tip //zakret
 {
-
+	Turn(direction dir = direction::right) : dir(dir) {};
 	direction dir;
+
+	virtual void showTip() {
+		std::cout << "turn ";
+		if (dir == direction::left) std::cout << "left";
+		else if (dir == direction::right) std::cout << "right";
+		else std::cout << "error";
+		std::cout << std::endl;	
+	}
 
 	virtual void Accept(Visitor& v)
 	{
@@ -17,7 +26,14 @@ struct Turn : Tip //zakret
 
 struct Forward : Tip //jazda prosto
 {
-	int m; //metres
+	unsigned n; //metres
+
+	virtual void showTip()
+	{
+		std::cout << "drive forward " << n << "metres" << std::endl;
+
+	}
+
 
 	virtual void Accept(Visitor& v)
 	{
@@ -27,7 +43,12 @@ struct Forward : Tip //jazda prosto
 
 struct ExitRamp : Tip //n-ty zjazd
 {
-	int n;
+	unsigned n;
+
+	virtual void showTip()
+	{
+		std::cout << "exit road on " << n << ". ramp" << std::endl;
+	}
 
 	virtual void Accept(Visitor& v)
 	{
@@ -40,6 +61,14 @@ struct ExitRamp : Tip //n-ty zjazd
 struct Destination : Tip //po ktorej stronie jest cel
 {
 	direction dir;
+
+	virtual void showTip() {
+		std::cout << "your destination will be on your";
+		if (dir == direction::left) std::cout << "left";
+		else if (dir == direction::right) std::cout << "right";
+		else std::cout << "error";
+		std::cout << "side" << std::endl;
+	}
 
 	virtual void Accept(Visitor& v)
 	{

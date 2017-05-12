@@ -16,14 +16,24 @@ int main()
 
 	Forward test;
 	SaveVisitor vis;
-	test.m = 25;
+	test.n = 25;
 
-	cout << test.m << endl;
+	cout << test.n << endl;
 
 	test.Accept(vis);
 
 
-	cout << test.m << endl;
+	cout << test.n << endl;
+
+	Turn lewo(direction::left);
+
+
+	TipContainer cont;
+	
+	cont.add(&lewo);
+
+	cont[0].showTip();
+
 
 
 	system("pause");
