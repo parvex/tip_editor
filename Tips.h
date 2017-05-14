@@ -2,7 +2,7 @@
 #include "Visitor.h"
 #include <iostream>
 
-enum direction { left, right, forward, back };
+enum direction { left, right, back };
 
 struct Turn : Tip //zakret
 {
@@ -13,7 +13,7 @@ struct Turn : Tip //zakret
 		std::cout << "turn ";
 		if (dir == direction::left) std::cout << "left";
 		else if (dir == direction::right) std::cout << "right";
-		else std::cout << "error";
+		else std::cout << "back";
 		std::cout << std::endl;	
 	}
 
@@ -26,11 +26,16 @@ struct Turn : Tip //zakret
 
 struct Forward : Tip //jazda prosto
 {
-	unsigned n; //metres
+	size_t n; //metres
+
+	Forward(size_t n = 500) : n(n) {}
+
 
 	virtual void showTip()
 	{
-		std::cout << "drive forward " << n << "metres" << std::endl;
+		std::cout << "move forward ";
+		if (n >= 1000) std::cout << n / 1000. << "km\n";
+		else std::cout << n << "m\n";
 
 	}
 
@@ -43,7 +48,9 @@ struct Forward : Tip //jazda prosto
 
 struct ExitRamp : Tip //n-ty zjazd
 {
-	unsigned n;
+	size_t n;
+
+	ExitRamp(size_t n) : n(n) {}
 
 	virtual void showTip()
 	{
@@ -61,6 +68,8 @@ struct ExitRamp : Tip //n-ty zjazd
 struct Destination : Tip //po ktorej stronie jest cel
 {
 	direction dir;
+
+	Destination(direction dir = direction::right) : dir(dir) {}
 
 	virtual void showTip() {
 		std::cout << "your destination will be on your";

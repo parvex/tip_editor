@@ -12,10 +12,10 @@ void SaveVisitor::visit_Forward(const  Forward& tip)
 {
 }
 
-void SaveVisitor::visit_ExitRamp(const  ExitRamp & tip)
+void SaveVisitor::visit_ExitRamp(const  ExitRamp& tip)
 {
 }
 
-void SaveVisitor::visit_Destination(const Destination & tip)
+void SaveVisitor::visit_Destination(const Destination& tip)
 {
 }
