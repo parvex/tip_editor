@@ -1,5 +1,5 @@
 #include <stdio.h>
-//#include <boost/test/auti_unit_test.hpp>
+#include <boost/test/auto_unit_test.hpp>
 #define BOOST_TEST_MODULE Tips_tests_proj
 
 

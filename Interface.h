@@ -1,5 +1,5 @@
 #pragma once
-#include "tip.h"
+#include "Tip.h"
 #include "TipContainer.h"
 
 class Interface

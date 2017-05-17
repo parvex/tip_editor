@@ -4,9 +4,9 @@ CPPFLAGS = --std=c++11 -Wall -Werror -DBOOST_TEST_DYN_LINK
 LINKFLAGS = --std=c++11 -lboost_unit_test_framework
 
 lib_SOURCES = \
-	tip.h \
-	point.h \
-	tip_container.h
+	Interface.cpp \
+	SaveVisitor.cpp \
+	TipContainer.cpp
 
 lib_OBJECTS=$(lib_SOURCES:.cpp=.o)
 
