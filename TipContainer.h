@@ -2,12 +2,11 @@
 #include <vector>
 #include <memory>
 #include "Tips.h"
-
+#include <fstream>
 
 
 class TipContainer
 {
-
 	std::vector<Tip*> tab;
 
 public:
@@ -20,5 +19,11 @@ public:
 	Tip& operator [] (size_t n) { return *(tab[n]); }
 	void visitAll(Visitor& vis) { for (Tip*& tip : tab) { tip->Accept(vis); } }
 	size_t size() { return tab.size(); }
+	void clear() { 
+		for (size_t i = 0; i < tab.size(); i++)
+			delete tab[i];
+		tab.clear();
+	}
 };
 
+int loadTips(TipContainer& cont, const char* fileName);

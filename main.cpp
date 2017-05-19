@@ -1,6 +1,7 @@
 #include <iostream>
 using namespace std;
 
+#include <vector>
 #include "Tips.h"
 #include "SaveVisitor.h"
 #include "ScanLeftTurnVisitor.h"
@@ -10,8 +11,7 @@ using namespace std;
 
 int main()
 {
-	Interface programme;
-
-
-	return 0;
+	TipContainer container;
+	Interface programme(container);
+	return programme.exec();
 }

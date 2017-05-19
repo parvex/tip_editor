@@ -5,11 +5,11 @@
 class Interface
 {
 private:
-	TipContainer cont;
+	TipContainer& cont;
 
 public:
-	Interface() { startMenu(); }
-	void startMenu();
+	Interface(TipContainer& cont) : cont(cont) {}
+	int exec();
 	void addMenu(size_t index = 0 );
 	void addForward(size_t index);
 	void addTurn(size_t index);

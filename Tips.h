@@ -9,12 +9,11 @@ struct Turn : Tip //zakret
 	Turn(direction dir = direction::right) : dir(dir) {};
 	direction dir;
 
-	virtual void showTip() {
-		std::cout << "turn ";
-		if (dir == direction::left) std::cout << "left";
-		else if (dir == direction::right) std::cout << "right";
-		else std::cout << "back";
-		std::cout << std::endl;	
+	virtual std::string getTip() const{
+
+		if (dir == direction::left) return "turn left\n";
+		else if (dir == direction::right) return "turn right\n";
+		else return "turn back\n";	
 	}
 
 	virtual void Accept(Visitor& v)
@@ -31,13 +30,13 @@ struct Forward : Tip //jazda prosto
 	Forward(size_t n = 500) : n(n) {}
 
 
-	virtual void showTip()
-	{
-		std::cout << "move forward ";
-		if (n >= 1000) std::cout << n / 1000. << "km\n";
-		else std::cout << n << "m\n";
 
-	}
+	virtual std::string getTip() const
+	{
+		if (n >= 1000)   return "move forward " + std::to_string(n / 1000.) + "km\n";
+		else return "move forward " + std::to_string(n) + "m\n";
+	} 
+
 
 
 	virtual void Accept(Visitor& v)
@@ -52,10 +51,11 @@ struct ExitRamp : Tip //n-ty zjazd
 
 	ExitRamp(size_t n) : n(n) {}
 
-	virtual void showTip()
+	virtual std::string getTip() const
 	{
-		std::cout << "exit road on " << n << ". ramp" << std::endl;
+		return  "exit road on " + std::to_string(n) + ". ramp\n";
 	}
+
 
 	virtual void Accept(Visitor& v)
 	{
@@ -71,12 +71,13 @@ struct Destination : Tip //po ktorej stronie jest cel
 
 	Destination(direction dir = direction::right) : dir(dir) {}
 
-	virtual void showTip() {
-		std::cout << "your destination will be on your";
-		if (dir == direction::left) std::cout << "left";
-		else if (dir == direction::right) std::cout << "right";
-		else std::cout << "error";
-		std::cout << "side" << std::endl;
+
+
+	virtual std::string getTip() const
+	{
+		if (dir == direction::left) return "your destination will be on your left\n";
+		else if (dir == direction::right) return "your destination will be on your right\n";
+		else return "destination error\n";
 	}
 
 	virtual void Accept(Visitor& v)

@@ -5,7 +5,7 @@
 #include <string>
 #include "SaveVisitor.h"
 #include "ScanLeftTurnVisitor.h"
-#define sleep(x) std::this_thread::sleep_for (std::chrono::milliseconds(x))
+#include "PrintVisitor.h"
 using namespace std;
 
 void clear_screen()
@@ -25,7 +25,7 @@ void press_enter()
 	cin.get();
 }
 
-void Interface::startMenu()
+int Interface::exec() //start menu
 {	
 
 	char choice;
@@ -44,8 +44,8 @@ void Interface::startMenu()
 		{
 		case '1': {addMenu(); if(cont.size() != 0) mainMenu(); break; }
 		case '2': {load(); if (cont.size() != 0) mainMenu(); break; }
-		case 'q': {return; break; }
-		default: { cout << "wrong input"; sleep(500); break; }
+		case 'q': {return 0; break; }
+		default: { cout << "wrong input"; press_enter(); break; }
 		}
 
 	}
@@ -79,7 +79,7 @@ void Interface::addMenu(size_t index)
 		case '3': {addExitRamp(index); return; break; }
 		case '4': {addDestination(index); return; break; }
 		case 'q': {return; break; }
-		default: {cout << "wrong input"; sleep(500); break; }
+		default: {cout << "wrong input"; press_enter(); break; }
 		}
 
 	}
@@ -100,7 +100,7 @@ void Interface::addForward(size_t index)
 		cin.sync();
 		cin.get();  //moze nie dzialac na linuxie - "zjada" enter
 		cin >> n;
-		if (!cin) { cout << "wrong input"; sleep(500); continue; }
+		if (!cin) { cout << "wrong input"; press_enter(); continue; }
 		else
 		{
 			if (index == cont.size())
@@ -129,14 +129,14 @@ void Interface::addTurn(size_t index)
 		cin.clear();
 		cin.sync();
 		cin >> choice;
-		if (!cin) { cout << "wrong input"; sleep(500); continue; }
+		if (!cin) { cout << "wrong input"; press_enter(); continue; }
 
 		switch (choice)
 		{
 		case 'r': {dir = direction::right; choosen = 1; break; }
 		case 'l': {dir = direction::left; choosen = 1; break; }
 		case 'b': { dir = direction::back; choosen = 1; break; }
-		default : { cout << "wrong input"; sleep(500);  }
+		default : { cout << "wrong input"; press_enter();  }
 		}
 
 	}
@@ -158,7 +158,7 @@ void Interface::addExitRamp(size_t index)
 		cin.clear();
 		cin.sync();
 		cin >> n;
-		if (!cin) { cout << "wrong input"; sleep(500); continue; }
+		if (!cin) { cout << "wrong input"; press_enter(); continue; }
 		else
 		{
 			if (index == cont.size())
@@ -186,21 +186,21 @@ void Interface::addDestination(size_t index)
 		cin.clear();
 		cin.sync();
 		cin >> choice;
-		if (!cin) { cout << "wrong input"; sleep(500); continue; }
+		if (!cin) { cout << "wrong input"; press_enter(); continue; }
 
 		switch (choice)
 		{
 		case 'r': {dir = direction::right; choosen = 1; break; }
 		case 'l': {dir = direction::left; choosen = 1; break; }
-		default: { cout << "wrong input"; sleep(500); break; }
+		default: { cout << "wrong input"; press_enter(); break; }
 
 		}
 
 	}
 	if (index == cont.size())
-		cont.add(new Turn(dir));
+		cont.add(new Destination(dir));
 	else
-		cont.insert(index, new Turn(dir));
+		cont.insert(index, new Destination(dir));
 	return;
 }
 
@@ -216,7 +216,7 @@ void Interface::input()
 		cin.clear();
 		cin.sync();
 		cin >> index;
-		if (!cin || index > cont.size()) { cout << "wrong input\n"; sleep(500); continue; }
+		if (!cin || index > cont.size()) { cout << "wrong input\n"; press_enter(); continue; }
 		else
 			break;
 	}
@@ -247,7 +247,7 @@ void Interface::remove()
 		cin.clear();
 		cin.sync();
 		cin >> index;
-		if (!cin || index >= cont.size()) { cout << "wrong input\n"; sleep(500); continue; }
+		if (!cin || index >= cont.size()) { cout << "wrong input\n"; press_enter(); continue; }
 		else 
 			break;
 	}
@@ -264,28 +264,57 @@ size_t Interface::index()
 		cin.clear();
 		cin.sync();
 		cin >> index;
-		if (!cin) { cout << "wrong input\n"; sleep(500); continue; }
+		if (!cin) { cout << "wrong input\n"; press_enter(); continue; }
 		return index;
 	}
 }
 
 void Interface::show()
 {
+	PrintVisitor vis(std::cout);
 	clear_screen();
 	cout << "Your set of tips:\n";
 	for (size_t i = 0; i < cont.size(); i++)
 	{
 		cout << i << ". ";
-		cont[i].showTip();
+		cont[i].Accept(vis);
 	}
 }
 
 void Interface::save()
 {
+	string fileName;
+
+	clear_screen();
+	cout << "Enter file name:\n\n";
+	cin >> fileName;
+
+	SaveVisitor vis(fileName.c_str());
+
+	cont.visitAll(vis);
+
 }
 
 void Interface::load()
 {
+	while (true)
+	{
+		string fileName;
+
+		clear_screen();
+		cout << "Enter file name:\n\n";
+		cin >> fileName;
+
+
+		if (!loadTips(cont, fileName.c_str())) return;
+
+		cout << "error while reading(file may not exist or it's type is wrong)\n";
+		press_enter();
+
+	}
+	///////tu
+
+
 }
 
 void Interface::mainMenu()
@@ -317,8 +346,9 @@ void Interface::mainMenu()
 		case 'i': {input(); break; }
 		case 's': {show(); press_enter(); break; }
 		case 'l': { scanLeftTurns(); break; }
-		case 'q': {return; break; }
-		default: { cout << "wrong input"; sleep(500); break; }
+		case 'w': { save(); break; }
+		case 'q': { cont.clear(); return; break; }
+		default: { cout << "wrong input\n"; press_enter(); break; }
 		}
 
 	}

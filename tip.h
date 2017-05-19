@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 //wskazowki - skret, zawroc, prosto, n-ty zjazd, rondo(prosto, lewo..), 
 
@@ -8,5 +9,5 @@ struct Tip
 {
 	virtual ~Tip() {}
 	virtual void Accept(Visitor& v) = 0;
-	virtual void showTip() {}
+	virtual std::string getTip() const = 0;
 };
