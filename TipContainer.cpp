@@ -17,23 +17,23 @@ int loadTips(TipContainer& cont, const char* fileName)
 		{
 			reader >> dir;
 			//	reader dir;
-			cont.add(new Turn(static_cast<direction>(dir)));
+			cont.add(std::unique_ptr<Tip>(new Turn(static_cast<direction>(dir))));
 		}
 		else if (type == 'D')
 		{
 			reader >> dir;
 			//	reader dir;
-			cont.add(new Destination(static_cast<direction>(dir)));
+			cont.add(std::unique_ptr<Tip>(new Destination(static_cast<direction>(dir))));
 		}
 		else if (type == 'F')
 		{
 			reader >> n;
-			cont.add(new Forward(n));
+			cont.add(std::unique_ptr<Tip>(new Forward(n)));
 		}
 		else if (type == 'E')
 		{
 			reader >> n;
-			cont.add(new ExitRamp(n));
+			cont.add(std::unique_ptr<Tip>(new ExitRamp(n)));
 		}
 		else return 1; // error while reading
 	}

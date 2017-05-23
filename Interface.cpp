@@ -3,6 +3,7 @@
 #include <thread>
 #include <chrono>
 #include <string>
+#include <limits>
 #include "SaveVisitor.h"
 #include "ScanLeftTurnVisitor.h"
 #include "PrintVisitor.h"
@@ -21,9 +22,29 @@ void clear_screen()
 void press_enter()
 {
 	cout << "press enter to continue\n";
-	cin.ignore(); 
-	cin.get();
+	cin.ignore(numeric_limits<streamsize>::max(), '\n');
 }
+
+int getOneChar(char& c) //if reads one char succesfully changes c to that char else changes c to null
+{
+
+	string input;
+	getline(cin, input);
+	if (cin.fail())
+	{
+		cin.clear();
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		return -1;
+	}
+	if (input.length() != 1)
+	{
+		c = 0;
+		return -1;
+	}
+	c = input[0];
+	return 0;
+}
+
 
 int Interface::exec() //start menu
 {	
@@ -36,16 +57,13 @@ int Interface::exec() //start menu
 		<< "1. Create new set of tips\n"
 		<< "2. Load existing set from file\n"
 		<< "q. Exit application\n\n";
-		 cin.clear();
-		 cin.sync();
-		 cin >> choice;
-		if (! cin) continue;
+		getOneChar(choice);
 		switch (choice)
 		{
 		case '1': {addMenu(); if(cont.size() != 0) mainMenu(); break; }
 		case '2': {load(); if (cont.size() != 0) mainMenu(); break; }
 		case 'q': {return 0; break; }
-		default: { cout << "wrong input"; press_enter(); break; }
+		default: { cout << "wrong input\n"; press_enter(); break; }
 		}
 
 	}
@@ -68,10 +86,7 @@ void Interface::addMenu(size_t index)
 		<< "4. Destination side\n"
 		<< "q. quit\n\n";
 
-		 cin.clear();
-		 cin.sync();
-		 cin >> choice;
-		if (! cin) continue;
+		getOneChar(choice);
 		switch (choice)
 		{
 		case '1': {addForward(index); return; break; }
@@ -98,15 +113,16 @@ void Interface::addForward(size_t index)
 
 		cin.clear();
 		cin.sync();
-		cin.get();  //moze nie dzialac na linuxie - "zjada" enter
+		cin.get();
 		cin >> n;
+		cin.get();
 		if (!cin) { cout << "wrong input"; press_enter(); continue; }
 		else
 		{
 			if (index == cont.size())
-				cont.add(new Forward(n));
+				cont.add(unique_ptr<Tip>(new Forward(n)));
 			else
-				cont.insert(index, new Forward(n));
+				cont.insert(index, unique_ptr<Tip>(new Forward(n)));
 			return;
 		}
 
@@ -126,9 +142,7 @@ void Interface::addTurn(size_t index)
 		<< "l. left\n"
 		<< "b. turn back\n\n";
 
-		cin.clear();
-		cin.sync();
-		cin >> choice;
+		getOneChar(choice);
 		if (!cin) { cout << "wrong input"; press_enter(); continue; }
 
 		switch (choice)
@@ -141,9 +155,9 @@ void Interface::addTurn(size_t index)
 
 	}
 	if (index == cont.size())
-		cont.add(new Turn(dir));
+		cont.add(unique_ptr<Tip>(new Turn(dir)));
 	else
-		cont.insert(index, new Turn(dir));
+		cont.insert(index, unique_ptr<Tip>(new Turn(dir)));
 	return;
 }
 
@@ -162,9 +176,9 @@ void Interface::addExitRamp(size_t index)
 		else
 		{
 			if (index == cont.size())
-				cont.add(new ExitRamp(n));
+				cont.add(unique_ptr<Tip>(new ExitRamp(n)));
 			else
-				cont.insert(index, new ExitRamp(n));
+				cont.insert(index, unique_ptr<Tip>(new ExitRamp(n)));
 			return;
 		}
 
@@ -183,11 +197,7 @@ void Interface::addDestination(size_t index)
 			<< "r. right\n"
 			<< "l. left\n\n";
 
-		cin.clear();
-		cin.sync();
-		cin >> choice;
-		if (!cin) { cout << "wrong input"; press_enter(); continue; }
-
+		getOneChar(choice);
 		switch (choice)
 		{
 		case 'r': {dir = direction::right; choosen = 1; break; }
@@ -198,9 +208,9 @@ void Interface::addDestination(size_t index)
 
 	}
 	if (index == cont.size())
-		cont.add(new Destination(dir));
+		cont.add(unique_ptr<Tip>(new Destination(dir)));
 	else
-		cont.insert(index, new Destination(dir));
+		cont.insert(index, unique_ptr<Tip>(new Destination(dir)));
 	return;
 }
 
@@ -228,7 +238,7 @@ void Interface::scanLeftTurns()
 {
 	ScanLeftTurnsVisitor visitor;
 	cont.visitAll(visitor);
-	if (visitor.lTurnFlag == true)
+	if (visitor.getFlag() == true)
 		cout << "Left turns were found!!!\n\n";
 	else
 		cout << "No left turns were found ;)\n";
@@ -287,7 +297,7 @@ void Interface::save()
 
 	clear_screen();
 	cout << "Enter file name:\n\n";
-	cin >> fileName;
+	getline(cin, fileName);
 
 	SaveVisitor vis(fileName.c_str());
 
@@ -335,9 +345,7 @@ void Interface::mainMenu()
 
 			<< "w. Write set to file\n"
 			<< "q. Close set\n\n";
-		cin.clear();
-		cin.sync();
-		cin >> choice;
+		getOneChar(choice);
 		if (!cin) continue;
 		switch (choice)
 		{

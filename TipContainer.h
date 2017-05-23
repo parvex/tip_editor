@@ -7,23 +7,19 @@
 
 class TipContainer
 {
-	std::vector<Tip*> tab;
+	std::vector<std::unique_ptr<Tip>> tab;
 
 public:
-	~TipContainer() {
+	/*~TipContainer() {
 		for (size_t i = 0; i < tab.size(); i++)
-			delete tab[i]; }
-	void add(Tip* tip) { tab.push_back(tip); }
-	void remove(size_t n) { delete tab[n];  tab.erase(tab.begin() + n); }
-	void insert(size_t n, Tip* tip) { tab.insert(tab.begin() + n, tip); }
+			delete tab[i]; }*/
+	void add(std::unique_ptr<Tip> tip) { tab.push_back(std::move(tip)); }
+	void remove(size_t n) {  tab.erase(tab.begin() + n); }
+	void insert(size_t n, std::unique_ptr<Tip> tip) { tab.insert(tab.begin() + n, std::move(tip)); }
 	Tip& operator [] (size_t n) { return *(tab[n]); }
-	void visitAll(Visitor& vis) { for (Tip*& tip : tab) { tip->Accept(vis); } }
+	void visitAll(Visitor& vis) { for (int i = 0; i < tab.size(); i++) { tab[i]->Accept(vis); } }
 	size_t size() { return tab.size(); }
-	void clear() { 
-		for (size_t i = 0; i < tab.size(); i++)
-			delete tab[i];
-		tab.clear();
-	}
+	void clear() { tab.clear(); }
 };
 
 int loadTips(TipContainer& cont, const char* fileName);
