@@ -45,6 +45,44 @@ int getOneChar(char& c) //if reads one char succesfully changes c to that char e
 	return 0;
 }
 
+bool isNatural(const string& input)
+{
+	bool endOfDigits = false;
+	for (size_t i = 0; i < input.size(); i++)
+	{
+		if (!endOfDigits)
+			if (!isdigit(input[i]))
+				if (!isspace(input[i]))
+					return false;
+				else
+					endOfDigits = true;
+		if (endOfDigits)
+			if (!isspace(input[i]))
+				return false;
+	}
+	return true;
+}
+
+int getOneNatural(size_t& c)
+{
+	string input;
+	getline(cin, input);
+	if (cin.fail())
+	{
+		cin.clear();
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		return -1;
+	}
+
+	if (!isNatural(input))
+		return -1;
+
+	c = atoi(input.c_str());
+
+	return 0;
+	
+}
+
 
 int Interface::exec() //start menu
 {	
@@ -94,7 +132,7 @@ void Interface::addMenu(size_t index)
 		case '3': {addExitRamp(index); return; break; }
 		case '4': {addDestination(index); return; break; }
 		case 'q': {return; break; }
-		default: {cout << "wrong input"; press_enter(); break; }
+		default: {cout << "wrong input\n"; press_enter(); break; }
 		}
 
 	}
@@ -104,19 +142,16 @@ void Interface::addMenu(size_t index)
 
 void Interface::addForward(size_t index)
 {
-	size_t n;
+	size_t n = 0;
 	while (true)
 	{
 		clear_screen();
 		cout << "How many metres would you like to drive forward?\n\n";
 
 
-		cin.clear();
-		cin.sync();
-		cin.get();
-		cin >> n;
-		cin.get();
-		if (!cin) { cout << "wrong input"; press_enter(); continue; }
+
+		if (getOneNatural(n)) 
+			{ cout << "wrong input\n"; press_enter(); continue; }
 		else
 		{
 			if (index == cont.size())
@@ -169,10 +204,8 @@ void Interface::addExitRamp(size_t index)
 		clear_screen();
 		cout << "On which ramp would you like to exit?\n\n";
 
-		cin.clear();
-		cin.sync();
-		cin >> n;
-		if (!cin) { cout << "wrong input"; press_enter(); continue; }
+		if (getOneNatural(n)) 
+			{ cout << "wrong input"; press_enter(); continue; }
 		else
 		{
 			if (index == cont.size())
@@ -254,10 +287,7 @@ void Interface::remove()
 		clear_screen();
 		show();
 		cout << "Choose index to remove:\n\n";
-		cin.clear();
-		cin.sync();
-		cin >> index;
-		if (!cin || index >= cont.size()) { cout << "wrong input\n"; press_enter(); continue; }
+		if (getOneNatural(index) || index >= cont.size()) { cout << "wrong input\n"; press_enter(); continue; }
 		else 
 			break;
 	}
@@ -265,19 +295,6 @@ void Interface::remove()
 	return;
 }
 
-size_t Interface::index()
-{
-	size_t index;
-	cout << "Choose index for your purpose:\n\n";
-	while (1)
-	{
-		cin.clear();
-		cin.sync();
-		cin >> index;
-		if (!cin) { cout << "wrong input\n"; press_enter(); continue; }
-		return index;
-	}
-}
 
 void Interface::show()
 {
@@ -340,9 +357,6 @@ void Interface::mainMenu()
 			<< "i. Insert tip on choosen index\n"
 			<< "s. Show all tips\n"
 			<< "l. Seek left turns\n\n"
-
-
-
 			<< "w. Write set to file\n"
 			<< "q. Close set\n\n";
 		getOneChar(choice);

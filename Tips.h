@@ -33,8 +33,8 @@ struct Forward : Tip //jazda prosto
 
 	virtual std::string getTip() const
 	{
-		if (n >= 1000)   return "move forward " + std::to_string(n / 1000.) + "km\n";
-		else return "move forward " + std::to_string(n) + "m\n";
+	//	if (n >= 1000)   return "move forward " + std::to_string(n / 1000.) + "km\n";
+		return "move forward " + std::to_string(n) + "m\n";
 	} 
 
 
