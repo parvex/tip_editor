@@ -1,6 +1,6 @@
 # -Wall == all warnings enabled
 # -Werror == treat warnings as ERRORS!
-CPPFLAGS = --std=c++11 -Wall -Werror -DBOOST_TEST_DYN_LINK
+CPPFLAGS = --std=c++11 -Wall -DBOOST_TEST_DYN_LINK
 LINKFLAGS = --std=c++11 -lboost_unit_test_framework
 
 lib_SOURCES = \

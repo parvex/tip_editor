@@ -330,7 +330,7 @@ void Interface::load()
 
 		clear_screen();
 		cout << "Enter file name:\n\n";
-		cin >> fileName;
+		getline(cin, fileName);
 
 
 		if (!loadTips(cont, fileName.c_str())) return;
@@ -360,7 +360,6 @@ void Interface::mainMenu()
 			<< "w. Write set to file\n"
 			<< "q. Close set\n\n";
 		getOneChar(choice);
-		if (!cin) continue;
 		switch (choice)
 		{
 		case 'a': {addMenu(); break; }
