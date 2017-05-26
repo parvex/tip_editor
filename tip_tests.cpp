@@ -6,6 +6,8 @@
 #include <vector>
 #include <memory>
 #include <sstream>
+#include <ctime>
+#include <cstdlib>
 #include "Tips.h"
 #include "TipContainer.h"
 #include "SaveVisitor.h"
@@ -14,6 +16,8 @@
 #include "PrintVisitor.h"
 
 using namespace std;
+
+BOOST_AUTO_TEST_SUITE(Classes_tests_tips_container_visitors)
 
 BOOST_AUTO_TEST_CASE(Tips_inits)
 {
@@ -287,12 +291,17 @@ BOOST_AUTO_TEST_CASE(SaveVisitor_saving_and_loading_checking_correctness)
 
 	}
 
-
+	remove(fileName.c_str());
 }
 
 
 
-BOOST_AUTO_TEST_CASE(SaveVisitor_saving_and_loading_checking_correctness_more)
+
+
+
+
+
+BOOST_AUTO_TEST_CASE(SaveVisitor_saving_and_loading_checking_correctness_fewer_objects)
 {
 	TipContainer cont;
 	TipContainer second;
@@ -321,27 +330,9 @@ BOOST_AUTO_TEST_CASE(SaveVisitor_saving_and_loading_checking_correctness_more)
 		BOOST_CHECK(cont[i].getTip() == second[i].getTip());
 
 	}
+
+	remove(fileName.c_str());
 }
 
+BOOST_AUTO_TEST_SUITE_END()
 
-
-
-
-
-//// seven ways to detect and report the same error:
-//BOOST_CHECK(add(2, 2) == 4);           // #1 continues on error
-
-//BOOST_REQUIRE(add(2, 2) == 4);         // #2 throws on error
-
-//if (add(2, 2) != 4)
-//	BOOST_ERROR("Ouch...");             // #3 continues on error
-
-//if (add(2, 2) != 4)
-//	BOOST_FAIL("Ouch...");              // #4 throws on error
-
-//if (add(2, 2) != 4) throw "Ouch...";    // #5 throws on error
-
-//BOOST_CHECK_MESSAGE(add(2, 2) == 4,     // #6 continues on error
-//	"add(..) result: " << add(2, 2));
-
-//BOOST_CHECK_EQUAL(add(2, 2), 4);       // #7 continues on error

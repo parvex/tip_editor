@@ -19,30 +19,29 @@ void clear_screen()
 #endif
 }
 
-void press_enter()
+void Interface::press_enter()
 {
 	cout << "press enter to continue\n";
-	cin.ignore(numeric_limits<streamsize>::max(), '\n');
+	inputs.ignore(numeric_limits<streamsize>::max(), '\n');
 }
 
-int getOneChar(char& c) //if reads one char succesfully changes c to that char else changes c to null
+char Interface::getOneChar() //if reads one char succesfully changes c to that char else changes c to null
 {
 
 	string input;
-	getline(cin, input);
-	if (cin.fail())
+	getline(inputs, input);
+	if (inputs.fail())
 	{
-		cin.clear();
-		cin.ignore(numeric_limits<streamsize>::max(), '\n');
-		return -1;
+		inputs.clear();
+		inputs.ignore(numeric_limits<streamsize>::max(), '\n');
+		return 0;
 	}
 	if (input.length() != 1)
 	{
-		c = 0;
-		return -1;
+		return 0;
 	}
-	c = input[0];
-	return 0;
+	return input[0];
+
 }
 
 bool isNatural(const string& input)
@@ -69,14 +68,14 @@ bool isNatural(const string& input)
 	return true;
 }
 
-int getOneNatural(size_t& c)
+int Interface::putOneNatural(size_t& c)
 {
 	string input;
-	getline(cin, input);
-	if (cin.fail())
+	getline(inputs, input);
+	if (inputs.fail())
 	{
-		cin.clear();
-		cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		inputs.clear();
+		inputs.ignore(numeric_limits<streamsize>::max(), '\n');
 		return -1;
 	}
 
@@ -93,16 +92,19 @@ int getOneNatural(size_t& c)
 int Interface::exec() //start menu
 {	
 
-	char choice;
 	while (true)
 	{
+		if (exit)
+		{	
+	//		clear_screen();
+			return 1;
+		}
 		clear_screen();
 		 cout << "Welcome in arrival tip editor, what do you want to do?\n"
 		<< "1. Create new set of tips\n"
 		<< "2. Load existing set from file\n"
 		<< "q. Exit application\n\n";
-		getOneChar(choice);
-		switch (choice)
+		switch (getOneChar())
 		{
 		case '1': {addMenu(); if(cont.size() != 0) mainMenu(); break; }
 		case '2': {load(); if (cont.size() != 0) mainMenu(); break; }
@@ -117,8 +119,8 @@ int Interface::exec() //start menu
 
 void Interface::addMenu(size_t index)
 {
-	index = index ? index : cont.size(); // if index is == 0 i add at the end of vector otherwise add on choosen element
-	char choice;
+	index = index ? index-1 : cont.size(); // if index is == 0 i add at the end of vector otherwise add on choosen element
+
 	while (true)
 	{
 		clear_screen();
@@ -130,8 +132,7 @@ void Interface::addMenu(size_t index)
 		<< "4. Destination side\n"
 		<< "q. quit\n\n";
 
-		getOneChar(choice);
-		switch (choice)
+		switch (getOneChar())
 		{
 		case '1': {addForward(index); return; break; }
 		case '2': {addTurn(index); return; break; }
@@ -157,9 +158,14 @@ void Interface::addForward(size_t index)
 
 
 
-		if (getOneNatural(n)) 
+		if (putOneNatural(n)) 
 			{ cout << "wrong input\n"; press_enter(); continue; }
 		else if (n == 0) return;
+		else if (n == std::numeric_limits<std::size_t>::max()) 
+		{
+			cout << "that number is very big, please enter smaller one\n";
+			press_enter();
+		}
 		else
 		{
 			if (index == cont.size())
@@ -174,7 +180,6 @@ void Interface::addForward(size_t index)
 
 void Interface::addTurn(size_t index)
 {
-	char choice;
 	direction dir;
 	bool choosen = 0;
 	while (!choosen)
@@ -185,10 +190,9 @@ void Interface::addTurn(size_t index)
 		<< "l. left\n"
 		<< "b. turn back\nq.exit\n\n";
 
-		getOneChar(choice);
-		if (!cin) { cout << "wrong input"; press_enter(); continue; }
 
-		switch (choice)
+
+		switch (getOneChar())
 		{
 		case 'r': {dir = direction::right; choosen = 1; break; }
 		case 'l': {dir = direction::left; choosen = 1; break; }
@@ -211,12 +215,17 @@ void Interface::addExitRamp(size_t index)
 	while (true)
 	{
 		clear_screen();
-		cout << "On which ramp would you like to exit\n?"
+		cout << "On which ramp would you like to exit?\n"
 		<<	"press 0 to exit\n\n";
 
-		if (getOneNatural(n)) 
-			{ cout << "wrong input"; press_enter(); continue; }
+		if (putOneNatural(n)) 
+			{ cout << "wrong input\n"; press_enter(); continue; }
 		else if (n == 0) return;
+		else if (n == std::numeric_limits<std::size_t>::max())
+		{
+			cout << "that number is very big, please enter smaller one\n";
+			press_enter();
+		}
 		else
 		{
 			if (index == cont.size())
@@ -231,7 +240,6 @@ void Interface::addExitRamp(size_t index)
 
 void Interface::addDestination(size_t index)
 {
-	char choice;
 	direction dir;
 	bool choosen = 0;
 	while (!choosen)
@@ -243,8 +251,8 @@ void Interface::addDestination(size_t index)
 			<< "q. exit\n\n";
 
 
-		getOneChar(choice);
-		switch (choice)
+
+		switch (getOneChar())
 		{
 		case 'r': {dir = direction::right; choosen = 1; break; }
 		case 'l': {dir = direction::left; choosen = 1; break; }
@@ -270,12 +278,12 @@ void Interface::input()
 		clear_screen();
 		cout << "Choose index to input tip:\n0 to exit\n\n";
 		show();
-		if (getOneNatural(index) || index > cont.size()+1) { cout << "wrong input\n"; press_enter(); continue; }
+		if (putOneNatural(index) || index > cont.size()+1) { cout << "wrong input\n"; press_enter(); continue; }
 		else if (index == 0) return;
 		else
 			break;
 	}
-	addMenu(index-1);
+	addMenu(index);
 	return;
 }
 
@@ -300,7 +308,7 @@ void Interface::remove()
 		cout << "Choose index to remove:\npress 0 to exit\n\n";
 		show();
 
-		if (getOneNatural(index) || index > cont.size()) { cout << "wrong input\n"; press_enter(); continue; }
+		if (putOneNatural(index) || index > cont.size()) { cout << "wrong input\n"; press_enter(); continue; }
 		else if (index == 0) return;
 		else
 			break;
@@ -312,7 +320,7 @@ void Interface::remove()
 
 void Interface::show()
 {
-	PrintVisitor vis(std::cout);
+	PrintVisitor vis(cout);
 	cout << "Your set of tips:\n";
 	for (size_t i = 0; i < cont.size(); i++)
 	{
@@ -329,7 +337,7 @@ void Interface::save()
 
 	clear_screen();
 	cout << "Enter file name:\n\n";
-	getline(cin, fileName);
+	getline(inputs, fileName);
 
 	SaveVisitor vis(fileName.c_str());
 
@@ -347,7 +355,7 @@ void Interface::load()
 
 		cout << "Enter file name:\npress enter to exit\n\n";
 
-		getline(cin, fileName);
+		getline(inputs, fileName);
 
 
 		if (!loadTips(cont, fileName.c_str()) || fileName == "") return;
@@ -356,14 +364,12 @@ void Interface::load()
 		press_enter();
 
 	}
-	///////tu
 
 
 }
 
 void Interface::mainMenu()
 {
-	char choice;
 	while (true)
 	{
 		clear_screen();
@@ -375,19 +381,23 @@ void Interface::mainMenu()
 			<< "s. Show all tips\n"
 			<< "l. Seek left turns\n\n"
 			<< "w. Write set to file\n"
+			<< "e. Exit interface without deleting container(debugging option)\n"
 			<< "q. Close set\n\n";
-		getOneChar(choice);
-		switch (choice)
+
+		switch (getOneChar())
 		{
 		case 'a': {addMenu(); break; }
 		case 'r': {remove(); break; }
 		case 'i': {input(); break; }
 		case 's': {clear_screen();  show(); press_enter(); break; }
-		case 'l': { scanLeftTurns(); break; }
-		case 'w': { save(); break; }
-		case 'q': { cont.clear(); return; break; }
+		case 'l': {scanLeftTurns(); break; }
+		case 'w': {save(); break; }
+		case 'e': {exit = true; return; }
+		case 'q': {cont.clear(); return; break; }
 		default: { cout << "wrong input\n"; press_enter(); break; }
 		}
 
 	}
 }
+
+

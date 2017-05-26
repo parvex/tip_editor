@@ -12,7 +12,8 @@ lib_OBJECTS=$(lib_SOURCES:.cpp=.o)
 
 tests_SOURCES = \
 	tests_main.cpp \
-	tip_tests.cpp
+	tip_tests.cpp \
+	interface_tests.cpp
 
 tests_OBJECTS=$(tests_SOURCES:.cpp=.o)
 
