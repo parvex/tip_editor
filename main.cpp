@@ -8,11 +8,8 @@ using namespace std;
 #include "Interface.h"
 
 
-
 int main()
 {
-
-
 	TipContainer container;
 	Interface programme(container);
 	return programme.exec();

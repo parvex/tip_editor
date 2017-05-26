@@ -11,9 +11,9 @@ struct Turn : Tip //zakret
 
 	virtual std::string getTip() const{
 
-		if (dir == direction::left) return "turn left\n";
-		else if (dir == direction::right) return "turn right\n";
-		else return "turn back\n";	
+		if (dir == direction::left) return "turn left";
+		else if (dir == direction::right) return "turn right";
+		else return "turn back";	
 	}
 
 	virtual void Accept(Visitor& v)
@@ -34,7 +34,7 @@ struct Forward : Tip //jazda prosto
 	virtual std::string getTip() const
 	{
 	//	if (n >= 1000)   return "move forward " + std::to_string(n / 1000.) + "km\n";
-		return "move forward " + std::to_string(n) + "m\n";
+		return "move forward " + std::to_string(n) + "m";
 	} 
 
 
@@ -53,7 +53,7 @@ struct ExitRamp : Tip //n-ty zjazd
 
 	virtual std::string getTip() const
 	{
-		return  "exit road on " + std::to_string(n) + ". ramp\n";
+		return  "exit road on " + std::to_string(n) + ". ramp";
 	}
 
 
@@ -75,9 +75,9 @@ struct Destination : Tip //po ktorej stronie jest cel
 
 	virtual std::string getTip() const
 	{
-		if (dir == direction::left) return "your destination will be on your left\n";
-		else if (dir == direction::right) return "your destination will be on your right\n";
-		else return "destination error\n";
+		if (dir == direction::left) return "your destination will be on your left";
+		else if (dir == direction::right) return "your destination will be on your right";
+		else return "destination error";
 	}
 
 	virtual void Accept(Visitor& v)

@@ -51,14 +51,20 @@ bool isNatural(const string& input)
 	for (size_t i = 0; i < input.size(); i++)
 	{
 		if (!endOfDigits)
+		{
 			if (!isdigit(input[i]))
+			{
 				if (!isspace(input[i]))
 					return false;
 				else
 					endOfDigits = true;
+			}
+		}
 		if (endOfDigits)
+		{
 			if (!isspace(input[i]))
 				return false;
+		}
 	}
 	return true;
 }
@@ -111,12 +117,12 @@ int Interface::exec() //start menu
 
 void Interface::addMenu(size_t index)
 {
-	index = index ? index : cont.size(); // if index is == 0 i add at the end of vector
+	index = index ? index : cont.size(); // if index is == 0 i add at the end of vector otherwise add on choosen element
 	char choice;
 	while (true)
 	{
 		clear_screen();
-		cout << "Adding at: " << index  << ". index" << "                              number of tips : " << cont.size() << endl << endl
+		cout << "Adding at: " << index+1  << ". index" << "                              number of tips : " << cont.size() << endl << endl
 		<< "Choose kind of tip:\n"
 		<< "1. Move forward\n"
 		<< "2. Turn\n"
@@ -146,12 +152,14 @@ void Interface::addForward(size_t index)
 	while (true)
 	{
 		clear_screen();
-		cout << "How many metres would you like to drive forward?\n\n";
+		cout << "How many metres would you like to drive forward?\n"
+		<<	"press 0 to cancel\n\n";
 
 
 
 		if (getOneNatural(n)) 
 			{ cout << "wrong input\n"; press_enter(); continue; }
+		else if (n == 0) return;
 		else
 		{
 			if (index == cont.size())
@@ -175,7 +183,7 @@ void Interface::addTurn(size_t index)
 		cout << "Choose direction to turn:\n"
 		<< "r. right\n"
 		<< "l. left\n"
-		<< "b. turn back\n\n";
+		<< "b. turn back\nq.exit\n\n";
 
 		getOneChar(choice);
 		if (!cin) { cout << "wrong input"; press_enter(); continue; }
@@ -185,6 +193,7 @@ void Interface::addTurn(size_t index)
 		case 'r': {dir = direction::right; choosen = 1; break; }
 		case 'l': {dir = direction::left; choosen = 1; break; }
 		case 'b': { dir = direction::back; choosen = 1; break; }
+		case 'q': { return; break; }
 		default : { cout << "wrong input"; press_enter();  }
 		}
 
@@ -202,10 +211,12 @@ void Interface::addExitRamp(size_t index)
 	while (true)
 	{
 		clear_screen();
-		cout << "On which ramp would you like to exit?\n\n";
+		cout << "On which ramp would you like to exit\n?"
+		<<	"press 0 to exit\n\n";
 
 		if (getOneNatural(n)) 
 			{ cout << "wrong input"; press_enter(); continue; }
+		else if (n == 0) return;
 		else
 		{
 			if (index == cont.size())
@@ -228,13 +239,16 @@ void Interface::addDestination(size_t index)
 		clear_screen();
 		cout << "Choose direction to turn:\n"
 			<< "r. right\n"
-			<< "l. left\n\n";
+			<< "l. left\n"
+			<< "q. exit\n\n";
+
 
 		getOneChar(choice);
 		switch (choice)
 		{
 		case 'r': {dir = direction::right; choosen = 1; break; }
 		case 'l': {dir = direction::left; choosen = 1; break; }
+		case 'q': { return; break; }
 		default: { cout << "wrong input"; press_enter(); break; }
 
 		}
@@ -254,16 +268,14 @@ void Interface::input()
 	while (1)
 	{
 		clear_screen();
+		cout << "Choose index to input tip:\n0 to exit\n\n";
 		show();
-		cout << "Choose index to input tip:\n\n";
-		cin.clear();
-		cin.sync();
-		cin >> index;
-		if (!cin || index > cont.size()) { cout << "wrong input\n"; press_enter(); continue; }
+		if (getOneNatural(index) || index > cont.size()+1) { cout << "wrong input\n"; press_enter(); continue; }
+		else if (index == 0) return;
 		else
 			break;
 	}
-	addMenu(index);
+	addMenu(index-1);
 	return;
 }
 
@@ -285,13 +297,15 @@ void Interface::remove()
 	while (1)
 	{
 		clear_screen();
+		cout << "Choose index to remove:\npress 0 to exit\n\n";
 		show();
-		cout << "Choose index to remove:\n\n";
-		if (getOneNatural(index) || index >= cont.size()) { cout << "wrong input\n"; press_enter(); continue; }
-		else 
+
+		if (getOneNatural(index) || index > cont.size()) { cout << "wrong input\n"; press_enter(); continue; }
+		else if (index == 0) return;
+		else
 			break;
 	}
-	cont.remove(index);
+	cont.remove(index-1);
 	return;
 }
 
@@ -299,13 +313,14 @@ void Interface::remove()
 void Interface::show()
 {
 	PrintVisitor vis(std::cout);
-	clear_screen();
 	cout << "Your set of tips:\n";
 	for (size_t i = 0; i < cont.size(); i++)
 	{
-		cout << i << ". ";
+		cout << i+1 << ". ";
 		cont[i].Accept(vis);
+		cout << endl;
 	}
+	cout << endl;
 }
 
 void Interface::save()
@@ -329,11 +344,13 @@ void Interface::load()
 		string fileName;
 
 		clear_screen();
-		cout << "Enter file name:\n\n";
+
+		cout << "Enter file name:\npress enter to exit\n\n";
+
 		getline(cin, fileName);
 
 
-		if (!loadTips(cont, fileName.c_str())) return;
+		if (!loadTips(cont, fileName.c_str()) || fileName == "") return;
 
 		cout << "error while reading(file may not exist or it's type is wrong)\n";
 		press_enter();
@@ -365,7 +382,7 @@ void Interface::mainMenu()
 		case 'a': {addMenu(); break; }
 		case 'r': {remove(); break; }
 		case 'i': {input(); break; }
-		case 's': {show(); press_enter(); break; }
+		case 's': {clear_screen();  show(); press_enter(); break; }
 		case 'l': { scanLeftTurns(); break; }
 		case 'w': { save(); break; }
 		case 'q': { cont.clear(); return; break; }
