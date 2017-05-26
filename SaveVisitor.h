@@ -5,12 +5,17 @@
 
 struct SaveVisitor : public Visitor
 {
-	SaveVisitor(const char* fileName) : out(fileName, std::ios::out | std::ios::binary) {}
-	~SaveVisitor() { out.close(); }
+
 
 private:
+
 	std::ofstream out;
 public:
+	std::string fileName;
+	SaveVisitor(const char* fileName) : fileName(fileName), out(fileName, std::ios::out | std::ios::binary) {}
+	~SaveVisitor() { out.close(); }
+	void close() { out.close(); }
+	void open() { out.open(fileName.c_str(), std::ios::out | std::ios::binary); }
 	virtual void visit_Turn(const Turn& tip) { out << 'T'; out.write(reinterpret_cast<const char*>(&tip.dir), sizeof(direction)); }
 	virtual void visit_Forward(const Forward& tip) { out << 'F';  out.write(reinterpret_cast<const char*>(& tip.n), sizeof(size_t)); }
 	virtual void visit_ExitRamp(const ExitRamp& tip) { out << 'E'; out.write(reinterpret_cast<const char*>(& tip.n), sizeof(size_t)); }

@@ -18,7 +18,6 @@ public:
 	void input();
 	void scanLeftTurns();
 	void remove();
-	size_t index();
 	void show();
 	void save();
 	void load();

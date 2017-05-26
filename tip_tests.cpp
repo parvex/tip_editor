@@ -248,6 +248,7 @@ BOOST_AUTO_TEST_CASE(PrintVisitor_print_all)
 
 	cont.visitAll(vis);
 
+
 	string test(stream.str());
 
 	string correct = "turn backturn rightyour destination will be on your rightexit road on 7. rampmove forward 5200mexit road on 5. ramp";
@@ -268,14 +269,16 @@ BOOST_AUTO_TEST_CASE(SaveVisitor_saving_and_loading_checking_correctness)
 	cont.add(unique_ptr<Tip>(new Turn(direction::right)));
 	cont.add(unique_ptr<Tip>(new ExitRamp(7)));
 
-	SaveVisitor vis("temporary_file_for_testing_saving_visitor");
+	string fileName = "test";
+
+	SaveVisitor vis(fileName.c_str());
 
 	cont.visitAll(vis);
 
+	vis.close();
 
-	
-	loadTips(second, "temporary_file_for_testing_saving_visitor");
-	cout << cont.size() << endl << second.size();
+	loadTips(second, fileName.c_str());
+
 	BOOST_REQUIRE(cont.size() == second.size());
 
 	for (unsigned i = 0; i < cont.size(); i++)
@@ -287,9 +290,38 @@ BOOST_AUTO_TEST_CASE(SaveVisitor_saving_and_loading_checking_correctness)
 
 }
 
-///////////////
 
 
+BOOST_AUTO_TEST_CASE(SaveVisitor_saving_and_loading_checking_correctness_more)
+{
+	TipContainer cont;
+	TipContainer second;
+
+	cont.add(unique_ptr<Tip>(new Turn(direction::back)));
+	cont.add(unique_ptr<Tip>(new Destination(direction::left)));
+	cont.add(unique_ptr<Tip>(new Forward(5200)));
+	cont.add(unique_ptr<Tip>(new ExitRamp(5)));
+	cont.add(unique_ptr<Tip>(new Turn(direction::right)));
+	cont.add(unique_ptr<Tip>(new ExitRamp(7)));
+	cont.add(unique_ptr<Tip>(new Turn(direction::left)));
+	cont.add(unique_ptr<Tip>(new Destination(direction::left)));
+	cont.add(unique_ptr<Tip>(new Forward(3400)));
+	cont.add(unique_ptr<Tip>(new ExitRamp(6)));
+
+	string fileName = "test";
+
+	SaveVisitor vis(fileName.c_str());
+
+	cont.visitAll(vis);
+	vis.close();
+	loadTips(second, fileName.c_str());
+	BOOST_REQUIRE(cont.size() == second.size());
+	for (unsigned i = 0; i < cont.size(); i++)
+	{
+		BOOST_CHECK(cont[i].getTip() == second[i].getTip());
+
+	}
+}
 
 
 

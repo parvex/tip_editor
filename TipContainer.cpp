@@ -2,11 +2,12 @@
 
 
 
-
+#include <iostream>
+using namespace std;
 
 int loadTips(TipContainer& cont, const char* fileName)
-{
-	std::ifstream reader(fileName);
+{	
+	std::ifstream reader(fileName, ios_base::in | ios_base::binary);
 	if (!reader) return -1; //error while opening file
 
 	char type;
@@ -40,6 +41,8 @@ int loadTips(TipContainer& cont, const char* fileName)
 		}
 		else return 1; // error while reading
 	}
+
+
 	return 0;
 }
 
