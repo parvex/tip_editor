@@ -257,7 +257,7 @@ void Interface::addDestination(size_t index)
 		case 'r': {dir = direction::right; choosen = 1; break; }
 		case 'l': {dir = direction::left; choosen = 1; break; }
 		case 'q': { return; break; }
-		default: { cout << "wrong input"; press_enter(); break; }
+		default: { cout << "wrong input\n"; press_enter(); break; }
 
 		}
 
@@ -290,9 +290,13 @@ void Interface::input()
 void Interface::scanLeftTurns()
 {
 	ScanLeftTurnsVisitor visitor;
+
+
 	cont.visitAll(visitor);
+
+
 	if (visitor.getFlag() == true)
-		cout << "Left turns were found!!!\n\n";
+		cout << visitor.getAmount() << " left turns found!!!\n\n";
 	else
 		cout << "No left turns were found ;)\n";
 	press_enter();
