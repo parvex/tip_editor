@@ -384,9 +384,9 @@ void Interface::mainMenu()
 			<< "i. Insert tip on choosen index\n"
 			<< "s. Show all tips\n"
 			<< "l. Seek left turns\n\n"
-			<< "w. Write set to file\n"
-			<< "e. Exit interface without deleting container(debugging option)\n"
-			<< "q. Close set\n\n";
+			<< "w. Write set to file\n\n"
+			<< "q. Close set\n"
+			<< "e. Exit intefrace\n\n";
 
 		switch (getOneChar())
 		{
